@@ -1,5 +1,7 @@
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
@@ -8,9 +10,26 @@ import java.net.Socket;
 public class Client {
     public static void main(String[] args) {
         try {
-            Socket socket = new Socket("localhost" ,1100 );
+            String host=args[0];
+            int port=Integer.parseInt(args[1]);
+            Socket socket = new Socket(host,port);
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            dataOutputStream.writeUTF("Hello!");
+         //   dataOutputStream.writeUTF("Hello!");
+
+            InputStreamReader inp = new InputStreamReader(System.in);
+            BufferedReader keyboard = new BufferedReader(inp);
+
+            String line=null;
+
+            while(true) {
+                line = keyboard.readLine();
+                dataOutputStream.writeUTF(line);
+
+                if(line.equals("exit")){
+                    System.out.println("connection close");
+                    break;
+                }
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -8,7 +8,8 @@ import java.net.Socket;
 public class Server {
     public static void main(String[] args) {
         try {
-            ServerSocket serverSocket = new ServerSocket(1100);
+            int port=Integer.parseInt(args[0]);
+            ServerSocket serverSocket = new ServerSocket(port);
             Socket socket = serverSocket.accept(); // 'получаем' клиента
             InputStream inputStream = socket.getInputStream();
             DataInputStream dataInputStream = new DataInputStream(inputStream);
@@ -16,9 +17,15 @@ public class Server {
 
             // DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
             // BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-
-            String msg = dataInputStream.readUTF();
-            System.out.println(msg);
+            String msg=null;
+            while(true) {
+                msg = dataInputStream.readUTF();
+                System.out.println(msg);
+                if(msg.equals("exit")){
+                    System.out.println("connection close");
+                    break;
+                }
+            }
 
         }
         catch(Exception e){
