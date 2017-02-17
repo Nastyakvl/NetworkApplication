@@ -10,8 +10,7 @@ public class Server {
         try {
             int port=Integer.parseInt(args[0]);
             ServerSocket serverSocket = new ServerSocket(port);
-            Socket socket = serverSocket.accept(); // 'получаем' клиента
-            InputStream inputStream = socket.getInputStream();
+            /*InputStream inputStream = socket.getInputStream();
             DataInputStream dataInputStream = new DataInputStream(inputStream);
 
 
@@ -25,7 +24,14 @@ public class Server {
                     System.out.println("connection close");
                     break;
                 }
+            }*/
+
+            while (true) {
+                Socket socket = serverSocket.accept(); // 'получаем' клиента
+                Thread thread1 = new Thread(new Session(socket));
+                thread1.start();
             }
+
 
         }
         catch(Exception e){
