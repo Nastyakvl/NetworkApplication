@@ -6,9 +6,16 @@ import java.net.Socket;
  * Created by 14Kavalerova on 10.02.2017.
  */
 public class Server {
+    private static int sessionCount=0;
+    private static int maxSessionCount=5;
+
     public static void main(String[] args) {
+
+
         try {
             int port=Integer.parseInt(args[0]);
+
+
             ServerSocket serverSocket = new ServerSocket(port);
             /*InputStream inputStream = socket.getInputStream();
             DataInputStream dataInputStream = new DataInputStream(inputStream);
@@ -26,17 +33,29 @@ public class Server {
                 }
             }*/
 
+
             while (true) {
+
                 Socket socket = serverSocket.accept(); // 'получаем' клиента
-                Thread thread1 = new Thread(new Session(socket));
-                thread1.start();
+
+                //System.out.println("Count "+sessionCount);
+                if (sessionCount<maxSessionCount) {
+                    sessionCount++;
+                    System.out.println("Count "+sessionCount);
+                    Thread thread1 = new Thread(new Session(socket));
+                    thread1.start();
+                }
             }
-
-
         }
         catch(Exception e){
 
         }
 
+    }
+
+
+    public void threadStop(){
+        sessionCount--;
+        System.out.println("Number of session: " + sessionCount);
     }
 }
