@@ -18,32 +18,36 @@ public class Session implements Runnable {
     public  void run(){
         Server server=new Server();
         try {
-        InputStream inputStream = null;
+            InputStream inputStream = null;
 
             inputStream = socket.getInputStream();
 
-        DataInputStream dataInputStream = new DataInputStream(inputStream);
+            DataInputStream dataInputStream = new DataInputStream(inputStream);
 
-        String msg=null;
-        while(true) {
-            msg = dataInputStream.readUTF();
-            System.out.println(msg);
+            String msg=null;
+             while(true) {
+
+                msg = dataInputStream.readUTF();
+
             if(msg.equals("exit")){
                 System.out.println("connection close");
-
-                 server.threadStop();
                 break;
             }
-        }
-        }
-        catch (SocketException e) {
-            server.threadStop();
 
+            System.out.println(msg);
 
+            }
+        }
+        catch (SocketException e){
+            System.out.println("connection close");
         }
         catch (IOException e) {
-            e.printStackTrace();
+           // System.out.println("connection close");
         }
+        finally{
+           server.threadStop();
+
+       }
 
     }
 }

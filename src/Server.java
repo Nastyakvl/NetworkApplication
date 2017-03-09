@@ -7,16 +7,15 @@ import java.net.Socket;
  */
 public class Server {
     private static int sessionCount=0;
-    private static int maxSessionCount=5;
 
     public static void main(String[] args) {
-
-
         try {
+            int maxSessionCount=Integer.parseInt(args[1]);
             int port=Integer.parseInt(args[0]);
 
 
             ServerSocket serverSocket = new ServerSocket(port);
+
             /*InputStream inputStream = socket.getInputStream();
             DataInputStream dataInputStream = new DataInputStream(inputStream);
 
@@ -38,16 +37,31 @@ public class Server {
 
                 Socket socket = serverSocket.accept(); // 'получаем' клиента
 
-                //System.out.println("Count "+sessionCount);
-                if (sessionCount<maxSessionCount) {
+                if (sessionCount == maxSessionCount) {
+                    DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); //? do not work
+                    dos.writeUTF("Sorry, server too busy. Please try later");
+                    socket.close();
+                }
+                else{
                     sessionCount++;
                     System.out.println("Count "+sessionCount);
                     Thread thread1 = new Thread(new Session(socket));
                     thread1.start();
                 }
+
+
+                //System.out.println("Count "+sessionCount);
+                /*if (sessionCount<maxSessionCount) {
+                    sessionCount++;
+                    System.out.println("Count "+sessionCount);
+                    Thread thread1 = new Thread(new Session(socket));
+                    thread1.start();
+                }*/
             }
         }
         catch(Exception e){
+            System.out.println("Problem with arguments: "+e.getMessage());
+            return;
 
         }
 
