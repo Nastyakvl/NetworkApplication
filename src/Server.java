@@ -7,6 +7,7 @@ import java.net.Socket;
  */
 public class Server {
     private static int sessionCount=0;
+    private static Object lock=new Object();
 
     public static void main(String[] args) {
         try {
@@ -37,17 +38,23 @@ public class Server {
 
                 Socket socket = serverSocket.accept(); // 'получаем' клиента
 
-                if (sessionCount == maxSessionCount) {
-                    DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); //? do not work
-                    dos.writeUTF("Sorry, server too busy. Please try later");
-                    socket.close();
-                }
-                else{
-                    sessionCount++;
-                    System.out.println("Count "+sessionCount);
-                    Thread thread1 = new Thread(new Session(socket));
-                    thread1.start();
-                }
+                    synchronized (lock) {
+                        if (sessionCount < maxSessionCount) {
+                            sessionCount++;
+                            System.out.println("Count " + sessionCount);
+                            Thread thread1 = new Thread(new Session(socket));
+                            thread1.start();
+                           // DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); //? do not work
+                          //  dos.writeUTF("Hello");
+
+                        } else {
+
+                          //  DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); //? do not work
+                          //  dos.writeUTF("Sorry, server too busy. Please try later");
+                           // socket.close();
+                            lock.wait();
+                        }
+                   }
 
 
                 //System.out.println("Count "+sessionCount);
@@ -68,8 +75,13 @@ public class Server {
     }
 
 
-    public void threadStop(){
-        sessionCount--;
-        System.out.println("Number of session: " + sessionCount);
+    public  void threadStop(){
+        synchronized (lock) {
+
+            sessionCount--;
+            lock.notify();
+            System.out.println("Number of session: " + sessionCount);
+        }
+
     }
 }

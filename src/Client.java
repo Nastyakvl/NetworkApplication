@@ -17,6 +17,13 @@ public class Client {
             InputStreamReader inp = new InputStreamReader(System.in);
             BufferedReader keyboard = new BufferedReader(inp);
 
+
+           // DataInputStream dos = new DataInputStream(socket.getInputStream());
+           // String msgServer=dos.readUTF();
+           // System.out.println( msgServer);
+           // if( msgServer=="Sorry, server too busy. Please try later")
+           //  return;
+
             String line = null;
 
             while (true) {
