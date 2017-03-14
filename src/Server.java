@@ -17,53 +17,37 @@ public class Server {
 
             ServerSocket serverSocket = new ServerSocket(port);
 
-            /*InputStream inputStream = socket.getInputStream();
-            DataInputStream dataInputStream = new DataInputStream(inputStream);
-
-
-            // DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            // BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-            String msg=null;
-            while(true) {
-                msg = dataInputStream.readUTF();
-                System.out.println(msg);
-                if(msg.equals("exit")){
-                    System.out.println("connection close");
-                    break;
-                }
-            }*/
-
 
             while (true) {
 
                 Socket socket = serverSocket.accept(); // 'получаем' клиента
 
-                    synchronized (lock) {
+
                         if (sessionCount < maxSessionCount) {
-                            sessionCount++;
-                            System.out.println("Count " + sessionCount);
-                            Thread thread1 = new Thread(new Session(socket));
-                            thread1.start();
-                           // DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); //? do not work
-                          //  dos.writeUTF("Hello");
+                            synchronized (lock) {
+                                sessionCount++;
+                                System.out.println("Count " + sessionCount);
+                                Thread thread1 = new Thread(new Session(socket));
+                                thread1.start();
+                                // DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); //? do not work
+                                //  dos.writeUTF("Hello");
+                            }
 
                         } else {
+                            synchronized (lock) {
 
                           //  DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); //? do not work
                           //  dos.writeUTF("Sorry, server too busy. Please try later");
                            // socket.close();
                             lock.wait();
+                                sessionCount++;
+                                System.out.println("Count " + sessionCount);
+                                Thread thread1 = new Thread(new Session(socket));
+                                thread1.start();
+
                         }
                    }
 
-
-                //System.out.println("Count "+sessionCount);
-                /*if (sessionCount<maxSessionCount) {
-                    sessionCount++;
-                    System.out.println("Count "+sessionCount);
-                    Thread thread1 = new Thread(new Session(socket));
-                    thread1.start();
-                }*/
             }
         }
         catch(Exception e){
@@ -79,8 +63,8 @@ public class Server {
         synchronized (lock) {
 
             sessionCount--;
-            lock.notify();
             System.out.println("Number of session: " + sessionCount);
+            lock.notify();
         }
 
     }
