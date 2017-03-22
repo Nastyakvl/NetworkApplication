@@ -16,37 +16,26 @@ public class Server {
 
 
             ServerSocket serverSocket = new ServerSocket(port);
+            Channel channel=new Channel(2);
+            Dispecher dispecher=new Dispecher(channel);
 
 
             while (true) {
 
                 Socket socket = serverSocket.accept(); // 'получаем' клиента
 
+                synchronized (lock) {
+                    while (sessionCount == maxSessionCount) {
+                        lock.wait();
+                    }
 
-                        if (sessionCount < maxSessionCount) {
-                            synchronized (lock) {
-                                sessionCount++;
-                                System.out.println("Count " + sessionCount);
-                                Thread thread1 = new Thread(new Session(socket));
-                                thread1.start();
-                                // DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); //? do not work
-                                //  dos.writeUTF("Hello");
-                            }
+                        sessionCount++;
+                        System.out.println("Count " + sessionCount);
+                        Thread thread1 = new Thread(new Session(socket));
+                        thread1.start();
 
-                        } else {
-                            synchronized (lock) {
+                }
 
-                          //  DataOutputStream dos = new DataOutputStream(socket.getOutputStream()); //? do not work
-                          //  dos.writeUTF("Sorry, server too busy. Please try later");
-                           // socket.close();
-                            lock.wait();
-                                sessionCount++;
-                                System.out.println("Count " + sessionCount);
-                                Thread thread1 = new Thread(new Session(socket));
-                                thread1.start();
-
-                        }
-                   }
 
             }
         }
