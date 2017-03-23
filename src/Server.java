@@ -6,41 +6,41 @@ import java.net.Socket;
  * Created by 14Kavalerova on 10.02.2017.
  */
 public class Server {
+
     private int sessionCount = 0;
+    private int maxSessionCount;
+    private int port;
     private Object lock = new Object();
-    int maxSessionCount;
-    int port;
+    private Channel channel;
+    private Dispecher dispecher;
 
     public Server(int port, int maxSessionCount) {
         this.port = port;
         this.maxSessionCount = maxSessionCount;
-
+        channel=new Channel(2);
+        dispecher=new Dispecher(channel);
     }
 
     public  void start() {
+
         try {
-
             ServerSocket serverSocket = new ServerSocket(port);
-            Channel channel=new Channel(2);
-            Dispecher dispecher=new Dispecher(channel);
-
+            Thread threadDispecehr=new Thread(dispecher);
+            threadDispecehr.start();
 
             while (true) {
-
-                Socket socket = serverSocket.accept(); // 'получаем' клиента
+                Socket socket = serverSocket.accept();// 'получаем' клиента
 
                 synchronized (lock) {
                     while (sessionCount == maxSessionCount) {
                         lock.wait();
                     }
 
+                        channel.put(new Session(socket, this));
                         sessionCount++;
                         System.out.println("Count " + sessionCount);
-                        Thread thread1 = new Thread(new Session(socket, this));
-                        thread1.start();
 
                 }
-
 
             }
         }
