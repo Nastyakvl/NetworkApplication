@@ -9,14 +9,15 @@ import java.net.SocketException;
  */
 public class Session implements Runnable {
     Socket socket;
+    Server server;
 
-    Session(Socket socket){
-
+    Session(Socket socket, Server server){
+        this.server=server;
         this.socket=socket;
     }
 
     public  void run(){
-        Server server=new Server();
+        //Server server=new Server();
         try {
             InputStream inputStream = null;
 

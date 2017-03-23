@@ -6,14 +6,19 @@ import java.net.Socket;
  * Created by 14Kavalerova on 10.02.2017.
  */
 public class Server {
-    private static int sessionCount=0;
-    private static Object lock=new Object();
+    private int sessionCount = 0;
+    private Object lock = new Object();
+    int maxSessionCount;
+    int port;
 
-    public static void main(String[] args) {
+    public Server(int port, int maxSessionCount) {
+        this.port = port;
+        this.maxSessionCount = maxSessionCount;
+
+    }
+
+    public  void start() {
         try {
-            int maxSessionCount=Integer.parseInt(args[1]);
-            int port=Integer.parseInt(args[0]);
-
 
             ServerSocket serverSocket = new ServerSocket(port);
             Channel channel=new Channel(2);
@@ -31,7 +36,7 @@ public class Server {
 
                         sessionCount++;
                         System.out.println("Count " + sessionCount);
-                        Thread thread1 = new Thread(new Session(socket));
+                        Thread thread1 = new Thread(new Session(socket, this));
                         thread1.start();
 
                 }
