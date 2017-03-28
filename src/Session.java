@@ -9,10 +9,9 @@ import java.net.SocketException;
  */
 public class Session implements Runnable {
     Socket socket;
-    Server server;
 
-    Session(Socket socket, Server server){
-        this.server=server;
+    Session(Socket socket){
+
         this.socket=socket;
     }
 
@@ -46,7 +45,7 @@ public class Session implements Runnable {
            // System.out.println("connection close");
         }
         finally{
-           server.threadStop();
+
 
        }
 
