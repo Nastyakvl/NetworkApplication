@@ -7,7 +7,7 @@ public class Channel {
     private final int maxCount;
     private final LinkedList<Runnable> queue=new LinkedList<Runnable>();
 
-    private static Object lock=new Object();
+    private Object lock=new Object();
 
     public Channel(int maxCount){
 
@@ -46,6 +46,8 @@ public class Channel {
     }
 
     public int getSize() {
-        return queue.size();
+        synchronized (lock) {
+            return queue.size();
+        }
     }
 }

@@ -25,21 +25,24 @@ public class WorkerThread implements Runnable {
 
     @Override
     public void run() {
-
+        while (true){
             synchronized (lock) {
 
-                    while (currentTask == null)
-                        try {
-                            lock.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                while (currentTask == null)
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
 
-                    currentTask.run();
-                    threadPool.onTaskCompleted(this);
-                }
+                currentTask.run();
+                currentTask = null;
+                threadPool.onTaskCompleted(this);
 
+            }
         }
+
+    }
 
 }
