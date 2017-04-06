@@ -1,3 +1,7 @@
+package ConcurrentUtils;
+
+import NetUtils.Session;
+
 /**
  * Created by Nastya on 17.03.2017.
  */
@@ -5,7 +9,7 @@ public class Dispecher implements Runnable {
     private Channel channel;
     ThreadPool threadPool;
 
-    Dispecher(Channel channel, ThreadPool threadPool){
+   public Dispecher(Channel channel, ThreadPool threadPool){
 
         this.channel=channel;
         this.threadPool=threadPool;

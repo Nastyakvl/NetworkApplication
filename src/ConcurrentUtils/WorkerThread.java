@@ -1,3 +1,8 @@
+package ConcurrentUtils;
+
+import ConcurrentUtils.ThreadPool;
+import NetUtils.Session;
+
 /**
  * Created by Nastya on 24.03.2017.
  */
@@ -17,6 +22,8 @@ public class WorkerThread implements Runnable {
 
     public void execute(Session task) {
         synchronized (lock) {
+            if(currentTask!=null)
+                throw new IllegalStateException("Current task is not null");
             currentTask = task;
             lock.notifyAll();
         }
@@ -36,9 +43,16 @@ public class WorkerThread implements Runnable {
                     }
 
 
-                currentTask.run();
-                currentTask = null;
-                threadPool.onTaskCompleted(this);
+                try {
+                    currentTask.run();
+                }
+                catch(RuntimeException e){
+                    e.getStackTrace();
+                }
+                finally {
+                    currentTask = null;
+                    threadPool.onTaskCompleted(this);
+                }
 
             }
         }

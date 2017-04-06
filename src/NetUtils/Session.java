@@ -1,3 +1,5 @@
+package NetUtils;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,14 +11,16 @@ import java.net.SocketException;
  */
 public class Session implements Runnable {
     Socket socket;
+    messageHandler messageHandler;
 
-    Session(Socket socket){
+    Session(Socket socket, messageHandler handler){
 
         this.socket=socket;
+        this.messageHandler=handler;
     }
 
     public  void run(){
-        //Server server=new Server();
+        //Host server=new Host();
         try {
             InputStream inputStream = null;
 
@@ -34,7 +38,8 @@ public class Session implements Runnable {
                 break;
             }
 
-            System.out.println(msg);
+                 messageHandler.handle(msg);
+
 
             }
         }
